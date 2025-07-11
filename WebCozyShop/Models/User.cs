@@ -40,6 +40,8 @@ public partial class User
     [Unicode(false)]
     public string? Phone { get; set; }
 
+    public DateOnly? Dob { get; set; }
+
     [InverseProperty("User")]
     public virtual ICollection<Invoice> Invoices { get; set; } = new List<Invoice>();
 

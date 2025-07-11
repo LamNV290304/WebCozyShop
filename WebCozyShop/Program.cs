@@ -10,7 +10,8 @@ namespace WebCozyShop
 
             builder.Services.AddDbContextLayer(builder.Configuration);
             builder.Services.AddApplicationServices();
-
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.AddSession();
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
@@ -26,14 +27,14 @@ namespace WebCozyShop
             app.UseStatusCodePagesWithReExecute("/Error");
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
+            app.UseSession();
             app.UseRouting();
 
             app.UseAuthorization();
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Home}");
+                pattern: "{controller=Authen}/{action=Login}");
 
             app.Run();
         }

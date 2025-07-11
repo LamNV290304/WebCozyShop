@@ -8,10 +8,6 @@
 
   <ItemGroup>
     <Folder Include="Common\" />
-    <Folder Include="Helper\" />
-    <Folder Include="Repositories\Interface\" />
-    <Folder Include="Request\" />
-    <Folder Include="Services\Interface\" />
     <Folder Include="ViewModels\" />
   </ItemGroup>
 
