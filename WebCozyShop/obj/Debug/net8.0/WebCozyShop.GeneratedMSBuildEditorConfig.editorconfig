@@ -32,8 +32,16 @@ build_property.EnableCodeStyleSeverity =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXV0aGVuXExvZ2luLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[D:/.Net Project/WebCozyShop/WebCozyShop/Views/Home/Hehe.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxIZWhlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/.Net Project/WebCozyShop/WebCozyShop/Views/Home/Home.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxIb21lLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/.Net Project/WebCozyShop/WebCozyShop/Views/Home/Huhu.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxIdWh1LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/.Net Project/WebCozyShop/WebCozyShop/Views/Shared/Error.cshtml]
