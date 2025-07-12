@@ -27,5 +27,15 @@ namespace WebCozyShop.Repositories
         {
             return _context.Users.FirstOrDefault(u => u.Username.Equals(username)) ?? new User();
         }
+
+        public bool ResetPassword(string email, string passwordHash)
+        {
+            var user = _context.Users.FirstOrDefault(u => u.Email.Equals(email));
+            if (user == null) return false;
+
+            user.PasswordHash = passwordHash;
+            _context.Users.Update(user);
+            return _context.SaveChanges() > 0;
+        }
     }
 }

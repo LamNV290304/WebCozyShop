@@ -1,0 +1,61 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en" class="light-style customizer-hide" dir="ltr" data-theme="theme-default"
+      data-assets-path="/assets/" data-template="vertical-menu-template-free">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Reset Link Sent | CozyShop</title>
+    <link rel="stylesheet" href="~/assets/vendor/css/core.css" />
+    <link rel="stylesheet" href="~/assets/vendor/css/theme-default.css" />
+    <link rel="stylesheet" href="~/assets/css/demo.css" />
+    <link rel="stylesheet" href="~/assets/vendor/css/pages/page-auth.css" />
+</head>
+
+<body>
+    <div class="container-xxl">
+        <div class="authentication-wrapper authentication-basic container-p-y">
+            <div class="authentication-inner">
+                <div class="card">
+                    <div class="card-body text-center">
+
+                        <!-- Brand -->
+                        <span class="app-brand-text demo text-body fw-bolder fs-3">CozyShop</span>
+
+                        <!-- Success Icon -->
+                        <div class="my-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="none"
+                                 stroke="currentColor" stroke-width="2" class="text-success">
+                                <circle cx="32" cy="32" r="30" stroke-opacity=".2" />
+                                <path d="M20 34l8 8 16-16" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </div>
+
+                        <h4 class="mb-2">Kiểm tra hộp thư của bạn! 📧</h4>
+                        <p class="mb-4">
+                            Chúng tôi đã gửi cho bạn một liên kết đặt lại mật khẩu.<br />
+                            Liên kết chỉ có hiệu lực trong 30&nbsp;phút.
+                        </p>
+
+                        <a asp-area="" asp-controller="Authen" asp-action="Login"
+                           class="btn btn-primary d-grid w-100 mb-3">
+                            Về trang đăng nhập
+                        </a>
+
+                        <p class="text-muted">
+                            Không thấy e‑mail? Kiểm tra thư rác hoặc&nbsp;
+                            <a asp-controller="Authen" asp-action="ForgotPassword">thử lại</a>.
+                        </p>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/assets/vendor/libs/jquery/jquery.js"></script>
+    <script src="~/assets/js/main.js"></script>
+</body>
+</html>

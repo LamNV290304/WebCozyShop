@@ -50,7 +50,7 @@
                             <div class="mb-3 form-password-toggle">
                                 <div class="d-flex justify-content-between">
                                     <label asp-for="Password" class="form-label">Password</label>
-                                    <a href="/Account/ForgotPassword"><small>Forgot Password?</small></a>
+                                    <a asp-action="ForgotPassword" asp-controller="Authen"><small>Forgot Password?</small></a>
                                 </div>
                                 <div class="input-group input-group-merge">
                                     <input asp-for="Password" type="password" class="form-control" placeholder="................." />

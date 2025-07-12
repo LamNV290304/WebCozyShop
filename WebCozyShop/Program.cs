@@ -1,4 +1,5 @@
 using WebCozyShop.Infrastructure;
+using WebCozyShop.Services;
 
 namespace WebCozyShop
 {
@@ -12,6 +13,8 @@ namespace WebCozyShop
             builder.Services.AddApplicationServices();
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddSession();
+            builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("Smtp"));
+
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 

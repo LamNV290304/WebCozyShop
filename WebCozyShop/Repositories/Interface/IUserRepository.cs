@@ -7,5 +7,6 @@ namespace WebCozyShop.Repositories.Interface
         User? GetUserById(int userId);
         User? GetUserByEmailOrUsername(string ue);
         User? GetUserByUsername(string username);
+        bool ResetPassword(string email, string passwordHash);
     }
 }
