@@ -1,0 +1,106 @@
+﻿@model UserListViewModel
+@{
+    ViewData["Title"] = "User List";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-3">User List</h2>
+
+    <form method="get" asp-action="UserList" asp-controller="User" class="row g-3 mb-4">
+        <div class="col-auto">
+            <input name="SearchTerm" value="@Model.SearchTerm" class="form-control" placeholder="Search by name" />
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+    </form>
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">User List</h5>
+            <small class="text-muted">Total: @Model.Users.Count</small>
+        </div>
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success text-center mt-5" role="alert">
+                <h4 class="alert-heading">@TempData["Success"]</h4>
+            </div>
+        }
+        <div class="table-responsive text-nowrap">
+            <table class="table table-hover table-bordered">
+                <thead class="table-primary">
+                    <tr>
+                        <th><i class="bx bx-user me-1"></i> Full Name</th>
+                        <th><i class="bx bx-envelope me-1"></i> Email</th>
+                        <th><i class="bx bx-shield-quarter me-1"></i> Role</th>
+                        <th><i class="bx bx-phone me-1"></i> Phone</th>
+                        <th><i class="bx bx-cog me-1"></i> Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="table-border-bottom-0">
+                    @if (Model.Users.Any())
+                    {
+                        @foreach (var user in Model.Users)
+                        {
+                            <tr>
+                                <td>@user.FullName</td>
+                                <td>@user.Email</td>
+                                <td>
+                                    <span class="badge bg-label-primary me-1">@user.Role</span>
+                                </td>
+                                <td>@user.Phone</td>
+                                <td>
+                                    <form asp-controller="User" asp-action="DeleteUser" asp-route-id="@user.UserID" method="post" onsubmit="return confirm('Are you sure you want to delete this user?');">
+                                        <button type="submit" class="btn btn-sm btn-danger">
+                                            <i class="bx bx-trash"></i> Delete
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4" class="text-center text-muted">No users found.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    <nav class="pt-3">
+        <ul class="pagination justify-content-center">
+            @* Nút Previous *@
+            <li class="page-item @(Model.CurrentPage <= 1 ? "disabled" : "")">
+                <a class="page-link"
+                   asp-controller="User"
+                   asp-action="UserList"
+                   asp-route-searchTerm="@Model.SearchTerm"
+                   asp-route-page="@(Model.CurrentPage - 1)">Previous</a>
+            </li>
+
+            @* Các trang *@
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                    <a class="page-link"
+                       asp-controller="User"
+                       asp-action="UserList"
+                       asp-route-searchTerm="@Model.SearchTerm"
+                       asp-route-page="@i">@i</a>
+                </li>
+            }
+
+            @* Nút Next *@
+            <li class="page-item @(Model.CurrentPage >= Model.TotalPages ? "disabled" : "")">
+                <a class="page-link"
+                   asp-controller="User"
+                   asp-action="UserList"
+                   asp-route-searchTerm="@Model.SearchTerm"
+                   asp-route-page="@(Model.CurrentPage + 1)">Next</a>
+            </li>
+        </ul>
+    </nav>
+</div>

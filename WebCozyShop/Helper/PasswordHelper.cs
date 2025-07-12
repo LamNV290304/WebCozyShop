@@ -11,5 +11,10 @@
         {
             return BCrypt.Net.BCrypt.Verify(rawPassword, hashedPassword);
         }
+
+        public static string DefaultPassword()
+        {
+            return HashPassword("123abc@A"); // Default password
+        }
     }
 }

@@ -3,6 +3,7 @@ using WebCozyShop.Models;
 using WebCozyShop.Repositories.Interface;
 using WebCozyShop.Requests;
 using WebCozyShop.Services.Interface;
+using WebCozyShop.ViewModels;
 
 namespace WebCozyShop.Services
 {
@@ -55,6 +56,39 @@ namespace WebCozyShop.Services
             }
 
             return _userRepository.ChangePassword(id, PasswordHelper.HashPassword(request.NewPassword));
+        }
+
+        public UserListViewModel GetUsersPaged(string seachTerm, int pageNumber, int pageSize)
+        {
+            seachTerm = ValidationHelper.NormalizeSearchTerm(seachTerm);
+
+            var total = _userRepository.CountPages(seachTerm);
+            var users = _userRepository.GetPagedUsers(pageNumber, pageSize, seachTerm);
+
+            return new UserListViewModel
+            {
+                Users = users,
+                SearchTerm = seachTerm,
+                CurrentPage = pageNumber,
+                TotalPages = (int)Math.Ceiling((double)total / pageSize)
+            };
+        }
+
+        public bool DeleteUser(int userId)
+        {
+            return _userRepository.DeleteUser(userId) && userId != 1;
+        }
+
+        public bool CreateUser(CreateUserRequest user)
+        {
+            if (_userRepository.isUsernameExists(user.Username) ||
+                _userRepository.isEmailExists(user.Email) ||
+                _userRepository.isPhoneExists(user.Phone))
+            {
+                return false;
+            }
+
+            return _userRepository.CreateUser(user);
         }
     }
 }

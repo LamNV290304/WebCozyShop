@@ -18,16 +18,6 @@ namespace WebCozyShop.Controllers
             return View();
         }
 
-        public IActionResult Hehe()
-        {
-            return View();
-        }
-
-        public IActionResult Huhu()
-        {
-            return View();
-        }
-
         public IActionResult Error()
         {
             return View();

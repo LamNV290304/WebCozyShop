@@ -1,7 +1,7 @@
 ﻿<!-- Views/Shared/_Sidebar.cshtml -->
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
     <div class="app-brand demo">
-        <a href="/" class="app-brand-link">
+        <a asp-action="Home" asp-controller="Home" class="app-brand-link">
             <span class="app-brand-logo">
                 <i class='bx bx-store-alt'></i>
             </span>
@@ -20,27 +20,16 @@
             </a>
             <ul class="menu-sub">
                 <li class="menu-item">
-                    <a href="/Home/Home" class="menu-link">
+                    <a asp-action="UserList" asp-controller="User" class="menu-link">
                         <div>User List</div>
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a href="/Users/Create" class="menu-link">
+                    <a asp-action="CreateUser" asp-controller="User" class="menu-link">
                         <div>Add User</div>
                     </a>
                 </li>
-                <li class="menu-item">
-                    <a href="/Users/Roles" class="menu-link">
-                        <div>Roles</div>
-                    </a>
-                </li>
             </ul>
-        </li>
-        <li class="menu-item @(Context.Request.Path.StartsWithSegments("/Home/Huhu") ? "active" : "")"">
-            <a href="/Home/Huhu" class="menu-link">
-                <i class="menu-icon bx bx-box"></i>
-                <div>Product</div>
-            </a>
         </li>
     </ul>
 </aside>

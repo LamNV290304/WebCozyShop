@@ -9,6 +9,7 @@ namespace WebCozyShop.Controllers
     public class UserController : Controller
     {
         private readonly IUserService _userService;
+        private const int PageSize = 10;
 
         public UserController(IUserService userService)
         {
@@ -68,6 +69,50 @@ namespace WebCozyShop.Controllers
 
             TempData["Success"] = "Password changed successfully.";
             return RedirectToAction("ChangePassword");
+        }
+
+        [HttpGet]
+        public IActionResult UserList(string searchTerm = "", int page = 1)
+        {
+            var vm = _userService.GetUsersPaged(searchTerm, page, PageSize);
+            return View(vm);
+        }
+
+        [HttpPost]
+        public IActionResult DeleteUser(int id)
+        {
+            bool isDeleted = _userService.DeleteUser(id);
+            if (isDeleted)
+            {
+                TempData["Success"] = "User deleted successfully.";
+            }
+            else
+            {
+                TempData["Error"] = "Failed to delete user.";
+            }
+            return RedirectToAction("UserList");
+        }
+
+        [HttpGet]
+        public IActionResult CreateUser()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult CreateUser(CreateUserRequest request)
+        {
+            var isSuccess = _userService.CreateUser(request);
+            if (isSuccess)
+            {
+                TempData["Success"] = "User created successfully.";
+                return RedirectToAction("UserList");
+            }
+            else
+            {
+                TempData["Error"] = "Failed to create user. Please try again.";
+                return View(request);
+            }
         }
     }
 }
