@@ -1,0 +1,152 @@
+﻿@model CategoryManagementViewModel
+@{
+    ViewData["Title"] = "Category Management";
+}
+
+<div class="container mt-4">
+    <h4 class="mb-4 d-flex justify-content-between align-items-center">
+        Category Management
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createModal">
+            <i class="bx bx-plus-circle me-1"></i> Add Category
+        </button>
+    </h4>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success text-center mt-5" role="alert">
+            <h4 class="alert-heading">@TempData["Success"]</h4>
+        </div>
+    }
+    
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger text-center mt-5" role="alert">
+            <h4 class="alert-heading">@TempData["Error"]</h4>
+        </div>
+    }
+
+    <div class="card">
+        <div class="table-responsive text-nowrap">
+            <table class="table table-hover table-bordered">
+                <thead class="table-primary">
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var cat in Model.Categories)
+                    {
+                        <tr>
+                            <td>@cat.CategoryID</td>
+                            <td>@cat.Name</td>
+                            <td class="text-center">
+                                <button class="btn btn-sm btn-warning me-1"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#editModal"
+                                        data-id="@cat.CategoryID"
+                                        data-name="@cat.Name">
+                                    <i class="bx bx-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#deleteModal"
+                                        data-id="@cat.CategoryID"
+                                        data-name="@cat.Name">
+                                    <i class="bx bx-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- 🟢 Create Modal -->
+<div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form asp-action="CreateCategory" asp-controller="Category" method="post" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createModalLabel">Add Category</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label">Category Name</label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Create</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 🟡 Edit Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form asp-action="UpdateCategory" asp-controller="Category" method="post" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Edit Category</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" name="CategoryID" id="editCategoryId" />
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label">Category Name</label>
+                    <input asp-for="Name" class="form-control" id="editCategoryName" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-warning">Update</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 🔴 Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form asp-action="DeleteCategory" asp-controller="Category" method="post" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Delete Category</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" name="CategoryID" id="deleteCategoryId" />
+                <p>Are you sure you want to delete category <strong id="deleteCategoryName"></strong>?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-danger">Delete</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        const editModal = document.getElementById('editModal');
+        editModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            document.getElementById('editCategoryId').value = button.getAttribute('data-id');
+            document.getElementById('editCategoryName').value = button.getAttribute('data-name');
+        });
+
+        const deleteModal = document.getElementById('deleteModal');
+        deleteModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            document.getElementById('deleteCategoryId').value = button.getAttribute('data-id');
+            document.getElementById('deleteCategoryName').textContent = button.getAttribute('data-name');
+        });
+    </script>
+}

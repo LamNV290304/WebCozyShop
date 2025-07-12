@@ -12,11 +12,13 @@ namespace WebCozyShop.Infrastructure
             // Register repositories
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ITokenRepository, TokenRepository>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
 
             // Register services
             services.AddScoped<IAuthenService, AuthenService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ICategoryService, CategoryService>();
 
             return services;
         }
