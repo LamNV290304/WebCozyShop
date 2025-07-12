@@ -1,0 +1,128 @@
+﻿@model ProfileViewModel
+
+@{
+	ViewData["Title"] = "Profile";
+}
+
+
+
+<div class="container-fluid">
+	<div class="row justify-content-center">
+		<div class="col-xl-8 col-lg-10">
+			<div class="card shadow border-0">
+				<div class="card-header bg-primary text-white text-center py-4">
+					<h4 class="mb-1">@Model.User.FullName</h4>
+					<p class="mb-0">@Model.User.Email</p>
+				</div>
+				@if (TempData["Error"] != null)
+				{
+					<div class="alert alert-danger text-center mt-5" role="alert">
+						<h4 class="alert-heading">@TempData["Error"]</h4>
+						<p>The user you're trying to view doesn't exist or has been deleted.</p>
+					</div>
+				}
+
+				@if (TempData["Success"] != null)
+				{
+					<div class="alert alert-success text-center mt-5" role="alert">
+						<h4 class="alert-heading">@TempData["Success"]</h4>
+					</div>
+				}
+
+				<div class="card-body p-4">
+					<div class="row">
+						<div class="col-md-6 mb-3">
+							<div class="p-3 border rounded">
+								<h6 class="text-muted mb-1">Username</h6>
+								<p class="mb-0">@Model.User.Username</p>
+							</div>
+						</div>
+
+						<div class="col-md-6 mb-3">
+							<div class="p-3 border rounded">
+								<h6 class="text-muted mb-1">Role</h6>
+								<span class="badge bg-secondary bg-success">@Model.User.Role</span>
+							</div>
+						</div>
+
+						<div class="col-md-6 mb-3">
+							<div class="p-3 border rounded">
+								<h6 class="text-muted mb-1">Full Name</h6>
+								<p class="mb-0">@Model.User.FullName</p>
+							</div>
+						</div>
+
+						<div class="col-md-6 mb-3">
+							<div class="p-3 border rounded">
+								<h6 class="text-muted mb-1">Email</h6>
+								<p class="mb-0">@Model.User.Email</p>
+							</div>
+						</div>
+
+						<div class="col-md-6 mb-3">
+							<div class="p-3 border rounded">
+								<h6 class="text-muted mb-1">Phone</h6>
+								<p class="mb-0">@Model.User.Phone</p>
+							</div>
+						</div>
+
+						<div class="col-md-6 mb-3">
+							<div class="p-3 border rounded">
+								<h6 class="text-muted mb-1">Date of Birth</h6>
+								<p class="mb-0">@Model.User.Dob?.ToString("dd/MM/yyyy")</p>
+							</div>
+						</div>
+					</div>
+
+					<div class="text-center mt-4">
+						<button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+							Edit Profile
+						</button>
+						<a asp-action="ChangePassword" asp-controller="User" class="btn btn-outline-secondary">Change Password</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<form asp-action="UpdateProfile" asp-controller="User" method="post">
+				<div class="modal-header">
+					<h5 class="modal-title" id="editProfileModalLabel">Edit Profile</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+
+				<div class="modal-body">
+					<input type="hidden" asp-for="UpdateRequest.Id" />
+
+					<div class="mb-3">
+						<label asp-for="UpdateRequest.FullName" class="form-label">Full Name</label>
+						<input asp-for="UpdateRequest.FullName" class="form-control" />
+						<span asp-validation-for="UpdateRequest.FullName" class="text-danger"></span>
+					</div>
+
+					<div class="mb-3">
+						<label asp-for="UpdateRequest.Phone" class="form-label">Phone</label>
+						<input asp-for="UpdateRequest.Phone" class="form-control" />
+						<span asp-validation-for="UpdateRequest.Phone" class="text-danger"></span>
+					</div>
+
+					<div class="mb-3">
+						<label asp-for="UpdateRequest.Dob" class="form-label">Date of Birth</label>
+						<input asp-for="UpdateRequest.Dob" type="date" class="form-control" />
+						<span asp-validation-for="UpdateRequest.Dob" class="text-danger"></span>
+					</div>
+				</div>
+
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-primary">Save changes</button>
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+

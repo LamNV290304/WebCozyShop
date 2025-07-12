@@ -15,12 +15,11 @@
                     </div>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item" href="#"><i class="bx bx-user bx-tada me-2"></i> <span>Profile</span></a></li>
-                    <li><a class="dropdown-item" href="#"><i class="bx bx-cog bx-burst me-2"></i> <span>Settings</span></a></li>
+                    <li><a class="dropdown-item" asp-controller="User" asp-action="UserProfile"><i class="bx bx-user bx-tada me-2"></i> <span>Profile</span></a></li>
                     <li>
                         <div class="dropdown-divider"></div>
                     </li>
-                    <li><a class="dropdown-item" href="/Account/Logout"><i class="bx bx-power-off me-2"></i> <span>Logout</span></a></li>
+                    <li><a class="dropdown-item" asp-action="Login" asp-controller="Authen" ><i class="bx bx-power-off me-2"></i> <span>Logout</span></a></li>
                 </ul>
             </li>
         </ul>

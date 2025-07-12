@@ -1,5 +1,6 @@
 ﻿using WebCozyShop.Models;
 using WebCozyShop.Repositories.Interface;
+using WebCozyShop.Requests;
 
 namespace WebCozyShop.Repositories
 {
@@ -10,6 +11,17 @@ namespace WebCozyShop.Repositories
         public UserRepository(CozyShopDbContext context)
         {
             _context = context;
+        }
+
+        public bool ChangePassword(int userId, string newPasswordHash)
+        {
+            var user = _context.Users.FirstOrDefault(u => u.UserID == userId);
+            if (user == null) return false;
+
+            user.PasswordHash = newPasswordHash;
+
+            _context.Users.Update(user);
+            return _context.SaveChanges() > 0;
         }
 
         public User? GetUserByEmailOrUsername(string ue)
@@ -35,6 +47,18 @@ namespace WebCozyShop.Repositories
 
             user.PasswordHash = passwordHash;
             _context.Users.Update(user);
+            return _context.SaveChanges() > 0;
+        }
+
+        public bool UpdateUser(UpdateUserRequest user)
+        {
+            var userToUpdate = _context.Users.FirstOrDefault(u => u.UserID == user.Id);
+            if (userToUpdate == null) return false;
+
+            userToUpdate.FullName = user.FullName;
+            userToUpdate.Phone = user.Phone;
+            userToUpdate.Dob = user.Dob;
+            _context.Users.Update(userToUpdate);
             return _context.SaveChanges() > 0;
         }
     }

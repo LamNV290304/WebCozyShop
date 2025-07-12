@@ -1,4 +1,5 @@
 ﻿using WebCozyShop.Models;
+using WebCozyShop.Requests;
 
 namespace WebCozyShop.Repositories.Interface
 {
@@ -8,5 +9,7 @@ namespace WebCozyShop.Repositories.Interface
         User? GetUserByEmailOrUsername(string ue);
         User? GetUserByUsername(string username);
         bool ResetPassword(string email, string passwordHash);
+        bool UpdateUser(UpdateUserRequest user);
+        bool ChangePassword(int userId, string newPasswordHash);
     }
 }

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("WebCozyShop")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c8c1b887be1c593e1d5d4a928d675fdd05220be8")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1ae23d8b46ca2af8d5251f2db656111c3cec0bbf")]
 [assembly: System.Reflection.AssemblyProductAttribute("WebCozyShop")]
 [assembly: System.Reflection.AssemblyTitleAttribute("WebCozyShop")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
