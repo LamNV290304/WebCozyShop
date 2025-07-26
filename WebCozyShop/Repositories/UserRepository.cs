@@ -8,16 +8,16 @@ namespace WebCozyShop.Repositories
     public class UserRepository : IUserRepository
     {
         private readonly string roleDefault = "staff";
-        private readonly CozyShopDbContext _context;
+        private readonly CozyShopContext _context;
 
-        public UserRepository(CozyShopDbContext context)
+        public UserRepository(CozyShopContext context)
         {
             _context = context;
         }
 
-        public bool ChangePassword(int userId, string newPasswordHash)
+        public bool ChangePassword(int UserId, string newPasswordHash)
         {
-            var user = _context.Users.FirstOrDefault(u => u.UserID == userId);
+            var user = _context.Users.FirstOrDefault(u => u.UserId == UserId);
             if (user == null) return false;
 
             user.PasswordHash = newPasswordHash;
@@ -58,9 +58,9 @@ namespace WebCozyShop.Repositories
             return _context.SaveChanges() > 0;
         }
 
-        public bool DeleteUser(int userId)
+        public bool DeleteUser(int UserId)
         {
-            var user = _context.Users.FirstOrDefault(u => u.UserID == userId);
+            var user = _context.Users.FirstOrDefault(u => u.UserId == UserId);
             if (user == null) return false;
             _context.Users.Remove(user);
             return _context.SaveChanges() > 0;
@@ -92,9 +92,9 @@ namespace WebCozyShop.Repositories
                 .FirstOrDefault(u => u.Username.Equals(ue) || u.Email.Equals(ue)) ?? new User();
         }
 
-        public User? GetUserById(int userId)
+        public User? GetUserById(int UserId)
         {
-            return _context.Users.FirstOrDefault(u => u.UserID == userId) ?? new User();
+            return _context.Users.FirstOrDefault(u => u.UserId == UserId) ?? new User();
         }
 
         public User? GetUserByUsername(string username)
@@ -129,7 +129,7 @@ namespace WebCozyShop.Repositories
 
         public bool UpdateUser(UpdateUserRequest user)
         {
-            var userToUpdate = _context.Users.FirstOrDefault(u => u.UserID == user.Id);
+            var userToUpdate = _context.Users.FirstOrDefault(u => u.UserId == user.Id);
             if (userToUpdate == null) return false;
 
             userToUpdate.FullName = user.FullName;

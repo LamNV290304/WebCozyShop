@@ -16,9 +16,9 @@ namespace WebCozyShop.Services
             _userRepository = userRepository;
         }
 
-        public User? GetUserById(int userId)
+        public User? GetUserById(int UserId)
         {
-            return _userRepository.GetUserById(userId);
+            return _userRepository.GetUserById(UserId);
         }
 
         public User? GetUserByEmail(string email)
@@ -74,9 +74,9 @@ namespace WebCozyShop.Services
             };
         }
 
-        public bool DeleteUser(int userId)
+        public bool DeleteUser(int UserId)
         {
-            return _userRepository.DeleteUser(userId) && userId != 1;
+            return _userRepository.DeleteUser(UserId) && UserId != 1;
         }
 
         public bool CreateUser(CreateUserRequest user)

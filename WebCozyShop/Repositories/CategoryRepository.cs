@@ -5,8 +5,8 @@ namespace WebCozyShop.Repositories
 {
     public class CategoryRepository : ICategoryRepository
     {
-        private readonly CozyShopDbContext _context;
-        public CategoryRepository(CozyShopDbContext context)
+        private readonly CozyShopContext _context;
+        public CategoryRepository(CozyShopContext context)
         {
             _context = context;
         }
@@ -23,7 +23,7 @@ namespace WebCozyShop.Repositories
 
         public bool DeleteCategory(int id)
         {
-            var category = _context.Categories.FirstOrDefault(c => c.CategoryID == id);
+            var category = _context.Categories.FirstOrDefault(c => c.CategoryId == id);
             if (category == null) return false;
             _context.Categories.Remove(category);
             return _context.SaveChanges() > 0;
@@ -36,13 +36,13 @@ namespace WebCozyShop.Repositories
 
         public Category? GetCategoryById(int id)
         {
-            return _context.Categories.FirstOrDefault(c => c.CategoryID == id);
+            return _context.Categories.FirstOrDefault(c => c.CategoryId == id);
         }
 
         public bool UpdateCategory(Category category)
         {
             if (category == null) return false;
-            var existingCategory = _context.Categories.FirstOrDefault(c => c.CategoryID == category.CategoryID);
+            var existingCategory = _context.Categories.FirstOrDefault(c => c.CategoryId == category.CategoryId);
             if (existingCategory == null) return false;
             existingCategory.Name = category.Name;
             _context.Categories.Update(existingCategory);

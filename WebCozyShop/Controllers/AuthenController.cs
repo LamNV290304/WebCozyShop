@@ -1,9 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity.Data;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using WebCozyShop.Helper;
 using WebCozyShop.Models;
-using WebCozyShop.Repositories.Interface;
 using WebCozyShop.Requests;
 using WebCozyShop.Services.Interface;
 
@@ -39,7 +36,7 @@ namespace WebCozyShop.Controllers
                 return View(loginUser);
             }
 
-            HttpContext.Session.SetInt32("UserId", user.UserID);
+            HttpContext.Session.SetInt32("UserId", user.UserId);
             HttpContext.Session.SetString("Username", user.Username);
             HttpContext.Session.SetString("Email", user.Email);
             HttpContext.Session.SetString("Role", user.Role);

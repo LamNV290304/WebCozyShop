@@ -39,20 +39,20 @@
                     @foreach (var cat in Model.Categories)
                     {
                         <tr>
-                            <td>@cat.CategoryID</td>
+                            <td>@cat.CategoryId</td>
                             <td>@cat.Name</td>
                             <td class="text-center">
                                 <button class="btn btn-sm btn-warning me-1"
                                         data-bs-toggle="modal"
                                         data-bs-target="#editModal"
-                                        data-id="@cat.CategoryID"
+                                        data-id="@cat.CategoryId"
                                         data-name="@cat.Name">
                                     <i class="bx bx-edit"></i>
                                 </button>
                                 <button class="btn btn-sm btn-danger"
                                         data-bs-toggle="modal"
                                         data-bs-target="#deleteModal"
-                                        data-id="@cat.CategoryID"
+                                        data-id="@cat.CategoryId"
                                         data-name="@cat.Name">
                                     <i class="bx bx-trash"></i>
                                 </button>
@@ -97,7 +97,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <input type="hidden" name="CategoryID" id="editCategoryId" />
+                <input type="hidden" name="CategoryId" id="editCategoryId" />
                 <div class="mb-3">
                     <label asp-for="Name" class="form-label">Category Name</label>
                     <input asp-for="Name" class="form-control" id="editCategoryName" />
@@ -121,7 +121,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <input type="hidden" name="CategoryID" id="deleteCategoryId" />
+                <input type="hidden" name="CategoryId" id="deleteCategoryId" />
                 <p>Are you sure you want to delete category <strong id="deleteCategoryName"></strong>?</p>
             </div>
             <div class="modal-footer">

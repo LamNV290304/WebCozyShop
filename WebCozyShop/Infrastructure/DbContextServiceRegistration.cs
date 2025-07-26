@@ -7,7 +7,7 @@ namespace WebCozyShop.Infrastructure
     {
         public static IServiceCollection AddDbContextLayer(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContext<CozyShopDbContext>(options =>
+            services.AddDbContext<CozyShopContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
             return services;

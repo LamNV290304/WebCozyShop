@@ -10,10 +10,13 @@ namespace WebCozyShop
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddDbContextLayer(builder.Configuration);
+
+            // Add services to the container.
+            builder.Services.AddThirdPartyIntegrations(builder.Configuration);
             builder.Services.AddApplicationServices();
             builder.Services.AddHttpContextAccessor();
+
             builder.Services.AddSession();
-            builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("Smtp"));
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();

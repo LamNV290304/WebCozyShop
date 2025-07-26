@@ -6,37 +6,37 @@ namespace WebCozyShop.Repositories
 {
     public class TokenRepository : ITokenRepository
     {
-        private readonly CozyShopDbContext _cozyShopDbContext;
+        private readonly CozyShopContext _CozyShopContext;
 
-        public TokenRepository(CozyShopDbContext cozyShopDbContext)
+        public TokenRepository(CozyShopContext CozyShopContext)
         {
-            _cozyShopDbContext = cozyShopDbContext;
+            _CozyShopContext = CozyShopContext;
         }
 
         public bool IsTokenValid(string email, string token)
         {
-            var existingToken = _cozyShopDbContext.Tokens
+            var existingToken = _CozyShopContext.Tokens
                 .AsNoTracking()
                 .FirstOrDefault(t => t.Email == email && t.Token1 == token && t.Status == false && t.ExpiresAt > DateTime.UtcNow);
 
             if (existingToken == null) return false;
 
             existingToken.Status = true;
-            _cozyShopDbContext.Update(existingToken);
-            _cozyShopDbContext.SaveChanges();
+            _CozyShopContext.Update(existingToken);
+            _CozyShopContext.SaveChanges();
             return true;
         }
         
 
         public void SaveToken(string email, string token, DateTime expireTime)
         {
-            var existing = _cozyShopDbContext.Tokens.FirstOrDefault(t => t.Email == email);
+            var existing = _CozyShopContext.Tokens.FirstOrDefault(t => t.Email == email);
             if (existing != null)
             {
                 existing.Token1 = token;
                 existing.ExpiresAt = expireTime;
                 existing.Status = false;
-                _cozyShopDbContext.Update(existing);
+                _CozyShopContext.Update(existing);
             }
             else
             {
@@ -47,10 +47,10 @@ namespace WebCozyShop.Repositories
                     ExpiresAt = expireTime,
                     Status = false
                 };
-                _cozyShopDbContext.Tokens.Add(newToken);
+                _CozyShopContext.Tokens.Add(newToken);
             }
 
-            _cozyShopDbContext.SaveChanges();
+            _CozyShopContext.SaveChanges();
         }
     }
 }

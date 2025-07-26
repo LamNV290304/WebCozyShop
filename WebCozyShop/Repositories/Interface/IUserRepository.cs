@@ -5,15 +5,15 @@ namespace WebCozyShop.Repositories.Interface
 {
     public interface IUserRepository
     {
-        User? GetUserById(int userId);
+        User? GetUserById(int UserId);
         User? GetUserByEmailOrUsername(string ue);
         User? GetUserByUsername(string username);
         bool ResetPassword(string email, string passwordHash);
         bool UpdateUser(UpdateUserRequest user);
-        bool ChangePassword(int userId, string newPasswordHash);
+        bool ChangePassword(int UserId, string newPasswordHash);
         int CountPages(string searchTerm);
         List<User> GetPagedUsers(int pageIndex, int pageSize, string searchTerm);
-        bool DeleteUser(int userId);
+        bool DeleteUser(int UserId);
         bool CreateUser(CreateUserRequest user);
         bool isUsernameExists(string username);
         bool isEmailExists(string email);

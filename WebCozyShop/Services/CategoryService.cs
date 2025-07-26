@@ -27,7 +27,7 @@ namespace WebCozyShop.Services
         {
             var cate = new Category
             {
-                CategoryID = id,
+                CategoryId = id,
                 Name = category
             };
             return _categoryRepository.UpdateCategory(cate);

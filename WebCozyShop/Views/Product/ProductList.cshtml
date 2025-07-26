@@ -1,0 +1,202 @@
+﻿@model ProductManagementViewModel
+@{
+    ViewData["Title"] = "Product Management";
+}
+
+<div class="container mt-4">
+    <h4 class="mb-4 d-flex justify-content-between align-items-center">
+        Product Management
+        <form method="get" asp-action="ProductList" asp-controller="Product" class="d-flex gap-2 align-items-center">
+            <input type="text" name="Search" class="form-control" placeholder="Search by name..." value="@Model.Search" />
+            <select name="SelectedCategoryId" class="form-select">
+                <option value="">All Categories</option>
+                @foreach (var cat in Model.Categories)
+                {
+                    <option value="@cat.CategoryId"
+                            selected="@(cat.CategoryId.ToString() == Model.SelectedCategoryId ? "selected" : null)">
+                        @cat.Name
+                    </option>
+                }
+            </select>
+            <button type="submit" class="btn btn-outline-primary">Filter</button>
+        </form>
+    </h4>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+    <div class="card">
+        <div class="table-responsive text-nowrap">
+            <table class="table table-hover table-bordered">
+                <thead class="table-primary">
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Category</th>
+                        <th>Created At</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var product in Model.PagedProducts)
+                    {
+                        <tr>
+                            <td>@product.ProductId</td>
+                            <td>@product.Name</td>
+                            <td>@product.Description</td>
+                            <td>@product.Category.Name</td>
+                            <td>@product.CreatedAt?.ToString("dd-MM-yyyy")</td>
+                            <td class="text-center">
+                                <button class="btn btn-sm btn-warning" data-bs-toggle="modal"
+                                        data-bs-target="#editModal"
+                                        data-id="@product.ProductId"
+                                        data-name="@product.Name"
+                                        data-description="@product.Description"
+                                        data-category="@product.CategoryId">
+                                    <i class="bx bx-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger" data-bs-toggle="modal"
+                                        data-bs-target="#deleteModal"
+                                        data-id="@product.ProductId"
+                                        data-name="@product.Name">
+                                    <i class="bx bx-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 🔢 Pagination -->
+    <nav class="mt-3">
+        <ul class="pagination justify-content-center">
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                    <a class="page-link" href="?page=@i&Search=@Model.Search&SelectedCategoryId=@Model.SelectedCategoryId">@i</a>
+                </li>
+            }
+        </ul>
+    </nav>
+</div>
+
+<!-- 🟢 Create Modal -->
+<div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form asp-action="CreateProduct" asp-controller="Product" method="post" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Product</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Name</label>
+                    <input name="Name" class="form-control" required />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Description</label>
+                    <textarea name="Description" class="form-control"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Category</label>
+                    <select name="CategoryId" class="form-select">
+                        @foreach (var cat in Model.Categories)
+                        {
+                            <option value="@cat.CategoryId">@cat.Name</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Create</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 🟡 Edit Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form asp-action="UpdateProduct" asp-controller="Product" method="post" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Product</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" name="ProductId" id="editProductId" />
+                <div class="mb-3">
+                    <label class="form-label">Name</label>
+                    <input name="Name" id="editProductName" class="form-control" required />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Description</label>
+                    <textarea name="Description" id="editProductDescription" class="form-control"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Category</label>
+                    <select name="CategoryId" id="editProductCategory" class="form-select">
+                        @foreach (var cat in Model.Categories)
+                        {
+                            <option value="@cat.CategoryId">@cat.Name</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-warning">Update</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 🔴 Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form asp-action="DeleteProduct" asp-controller="Product" method="post" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete Product</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" name="ProductId" id="deleteProductId" />
+                <p>Are you sure you want to delete <strong id="deleteProductName"></strong>?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-danger">Delete</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+        const editModal = document.getElementById('editModal');
+        editModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            document.getElementById('editProductId').value = button.getAttribute('data-id');
+            document.getElementById('editProductName').value = button.getAttribute('data-name');
+            document.getElementById('editProductDescription').value = button.getAttribute('data-description');
+            document.getElementById('editProductCategory').value = button.getAttribute('data-category');
+        });
+
+        const deleteModal = document.getElementById('deleteModal');
+        deleteModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            document.getElementById('deleteProductId').value = button.getAttribute('data-id');
+            document.getElementById('deleteProductName').textContent = button.getAttribute('data-name');
+        });
+    </script>
+}

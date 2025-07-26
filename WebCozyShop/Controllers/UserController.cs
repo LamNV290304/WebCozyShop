@@ -19,9 +19,9 @@ namespace WebCozyShop.Controllers
         [HttpGet]
         public IActionResult UserProfile()
         {
-            var userId = HttpContext.Session.GetInt32("UserId");
+            var UserId = HttpContext.Session.GetInt32("UserId");
 
-            User user = _userService.GetUserById((int)userId!)!;
+            User user = _userService.GetUserById((int)UserId!)!;
             if (user == null)
             {
                 TempData["Error"] = "User not found.";
@@ -30,7 +30,7 @@ namespace WebCozyShop.Controllers
 
             UpdateUserRequest updateRequest = new UpdateUserRequest
             {
-                Id = user.UserID,
+                Id = user.UserId,
                 FullName = user.FullName,
                 Phone = user.Phone,
                 Dob = user.Dob,

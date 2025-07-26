@@ -44,8 +44,8 @@ namespace WebCozyShop.Controllers
         [HttpPost]
         public IActionResult UpdateCategory(CategoryManagementViewModel model, IFormCollection form)
         {
-            int categoryId = int.Parse(form["CategoryID"]);
-            bool isUpdated = _categoryService.UpdateCategory(model.Name, categoryId);
+            int CategoryId = int.Parse(form["CategoryId"]);
+            bool isUpdated = _categoryService.UpdateCategory(model.Name, CategoryId);
             if (isUpdated)
             {
                 TempData["Success"] = "Category updated successfully.";
@@ -60,9 +60,9 @@ namespace WebCozyShop.Controllers
         [HttpPost]
         public IActionResult DeleteCategory(IFormCollection form)
         {
-            int categoryId = int.Parse(form["CategoryID"]);
+            int CategoryId = int.Parse(form["CategoryId"]);
 
-            bool isDeleted = _categoryService.DeleteCategory(categoryId);
+            bool isDeleted = _categoryService.DeleteCategory(CategoryId);
             if (isDeleted)
             {
                 TempData["Success"] = "Category deleted successfully.";
