@@ -1,4 +1,5 @@
-﻿using WebCozyShop.Models;
+﻿using WebCozyShop.Helper;
+using WebCozyShop.Models;
 using WebCozyShop.Repositories.Interface;
 using WebCozyShop.Services.Interface;
 using WebCozyShop.ViewModels;
@@ -38,6 +39,7 @@ namespace WebCozyShop.Services
 
         public ProductManagementViewModel GetProductsPaged(string search, int CategoryId, int pageIndex, int pageSize)
         {
+            search = ValidationHelper.NormalizeSearchTerm(search);
             var products = _productRepository.GetProductsPaged(search, CategoryId, pageIndex, pageSize);
             var totalCount = _productRepository.Count(search, CategoryId);
             var categories = _categoryRepository.GetAllCategories();
