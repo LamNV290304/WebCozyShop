@@ -1,5 +1,395 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model ProductVariantManagementViewModel
 @{
+    ViewData["Title"] = $"Variants - {Model.Product.Name}";
+}
+
+<div class="container mt-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Product" asp-action="ProductList">Products</a></li>
+            <li class="breadcrumb-item active">@Model.Product.Name Variants</li>
+        </ol>
+    </nav>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="mb-0">Product Variants</h4>
+            <p class="text-muted mb-0">Managing variants for: <strong>@Model.Product.Name</strong></p>
+        </div>
+        <div class="d-flex gap-2">
+            <form method="get" asp-action="ProductVariantList" asp-controller="ProductVariant"
+                class="d-flex gap-2 align-items-center">
+                <input type="hidden" name="productId" value="@Model.Product.ProductId" />
+                <input type="text" name="search" class="form-control" placeholder="Search SKU, Color, Size..."
+                    value="@Model.Search" />
+                <button type="submit" class="btn btn-outline-primary">
+                    <i class="bx bx-search"></i>
+                </button>
+            </form>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createVariantModal">
+                <i class="bx bx-plus"></i> Add Variant
+            </button>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h6 class="mb-0">Product Variants (@Model.TotalVariants total)</h6>
+            <small class="text-muted">Page @Model.CurrentPage of @Model.TotalPages</small>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>SKU</th>
+                        <th>Size</th>
+                        <th>Color</th>
+                        <th>Price</th>
+                        <th>Stock</th>
+                        <th>Status</th>
+                        <th>Image</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.PagedVariants.Any())
+                    {
+                        @foreach (var variant in Model.PagedVariants)
+                        {
+                            <tr>
+                                <td><strong>@variant.Sku</strong></td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(variant.Size))
+                                    {
+                                        <span class="badge bg-info">@variant.Size</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">-</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(variant.Color))
+                                    {
+                                        <span class="badge bg-secondary">@variant.Color</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">-</span>
+                                    }
+                                </td>
+                                <td><strong>$@variant.Price.ToString("F2")</strong></td>
+                                <td>
+                                    <span
+                                        class="badge @(variant.StockQuantity > 10 ? "bg-success" : variant.StockQuantity > 0 ? "bg-warning" : "bg-danger")">
+                                        @variant.StockQuantity
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge @(variant.IsActive == true ? "bg-success" : "bg-secondary")">
+                                        @(variant.IsActive == true ? "Active" : "Inactive")
+                                    </span>
+                                </td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(variant.ImageUrl))
+                                    {
+                                        <img src="@variant.ImageUrl" alt="Variant" class="rounded"
+                                            style="width: 40px; height: 40px; object-fit: cover;" />
+                                    }
+                                    else
+                                    {
+                                        <div class="bg-light rounded d-flex align-items-center justify-content-center"
+                                            style="width: 40px; height: 40px;">
+                                            <i class="bx bx-image text-muted"></i>
+                                        </div>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group btn-group-sm">
+                                        <button class="btn btn-outline-warning" data-bs-toggle="modal"
+                                            data-bs-target="#editVariantModal" data-id="@variant.VariantId"
+                                            data-productid="@variant.ProductId" data-sku="@variant.Sku"
+                                            data-color="@variant.Color" data-size="@variant.Size" data-price="@variant.Price"
+                                            data-stock="@variant.StockQuantity" data-imageurl="@variant.ImageUrl"
+                                            data-isactive="@variant.IsActive">
+                                            <i class="bx bx-edit"></i>
+                                        </button>
+                                        <button class="btn btn-outline-danger" data-bs-toggle="modal"
+                                            data-bs-target="#deleteVariantModal" data-id="@variant.VariantId"
+                                            data-sku="@variant.Sku" data-productid="@variant.ProductId">
+                                            <i class="bx bx-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8" class="text-center text-muted py-4">
+                                <i class="bx bx-package bx-lg"></i>
+                                <p class="mb-0 mt-2">No variants found for this product.</p>
+                                <button class="btn btn-sm btn-primary mt-2" data-bs-toggle="modal"
+                                    data-bs-target="#createVariantModal">
+                                    Add First Variant
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    @if (Model.TotalPages > 1)
+    {
+        <nav class="mt-4">
+            <ul class="pagination justify-content-center">
+                @for (int i = 1; i <= Model.TotalPages; i++)
+                {
+                    <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                        <a class="page-link" href="?productId=@Model.Product.ProductId&page=@i&search=@Model.Search">@i</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    }
+</div>
+
+<!-- Create Variant Modal -->
+<div class="modal fade" id="createVariantModal" tabindex="-1">
+    <div class="modal-dialog">
+        <form asp-action="CreateVariant" asp-controller="ProductVariant" method="post" enctype="multipart/form-data"
+            class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add New Variant</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" name="ProductId" value="@Model.Product.ProductId" />
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Size</label>
+                        <select name="Size" class="form-select">
+                            <option value="">Select Size</option>
+                            <option value="XS">XS</option>
+                            <option value="S">S</option>
+                            <option value="M">M</option>
+                            <option value="L">L</option>
+                            <option value="XL">XL</option>
+                            <option value="XXL">XXL</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Color</label>
+                        <input name="Color" class="form-control" placeholder="e.g., Red, Blue, Black" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Price <span class="text-danger">*</span></label>
+                        <input name="Price" type="number" step="0.01" class="form-control" required />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Stock Quantity</label>
+                        <input name="StockQuantity" type="number" class="form-control" value="0" />
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">SKU</label>
+                    <input name="Sku" class="form-control" placeholder="Leave empty for auto-generation" />
+                    <small class="form-text text-muted">Will be auto-generated if left empty</small>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Image</label>
+                    <input type="file" name="ImageFile" class="form-control" accept="image/*" />
+                    <small class="form-text text-muted">Upload an image for this variant</small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Create Variant</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Variant Modal -->
+<div class="modal fade" id="editVariantModal" tabindex="-1">
+    <div class="modal-dialog">
+        <form asp-action="UpdateVariant" asp-controller="ProductVariant" method="post" enctype="multipart/form-data"
+            class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Variant</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" name="VariantId" id="editVariantId" />
+                <input type="hidden" name="ProductId" id="editProductId" />
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Size</label>
+                        <select name="Size" id="editSize" class="form-select">
+                            <option value="">Select Size</option>
+                            <option value="XS">XS</option>
+                            <option value="S">S</option>
+                            <option value="M">M</option>
+                            <option value="L">L</option>
+                            <option value="XL">XL</option>
+                            <option value="XXL">XXL</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Color</label>
+                        <input name="Color" id="editColor" class="form-control" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Price <span class="text-danger">*</span></label>
+                        <input name="Price" id="editPrice" type="number" step="0.01" class="form-control" required />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Stock Quantity</label>
+                        <input name="StockQuantity" id="editStock" type="number" class="form-control" />
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">SKU <span class="text-danger">*</span></label>
+                    <input name="Sku" id="editSku" class="form-control" required />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Image</label>
+                    <div id="editImagePreviewContainer">
+                        <!-- Image preview or placeholder will be injected here -->
+                    </div>
+                    <input type="file" id="editImageUrl" name="ImageFile" class="form-control" accept="image/*" />
+                    <input type="hidden" name="RemoveImage" id="editRemoveImage" value="false" />
+                    <small class="form-text text-muted">Upload a new image to replace the current one</small>
+                </div>
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input type="hidden" name="IsActive" value="false" />
+                        <input name="IsActive" id="editIsActive" type="checkbox" class="form-check-input" value="true" />
+                        <label class="form-check-label" for="editIsActive">Active</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-warning">Update Variant</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Delete Variant Modal -->
+<div class="modal fade" id="deleteVariantModal" tabindex="-1">
+    <div class="modal-dialog">
+        <form asp-action="DeleteVariant" asp-controller="ProductVariant" method="post" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-danger">Delete Variant</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" name="variantId" id="deleteVariantId" />
+                <input type="hidden" name="productId" id="deleteProductId" />
+                <div class="text-center">
+                    <i class="bx bx-error-circle bx-lg text-danger mb-3"></i>
+                    <p>Are you sure you want to delete variant:</p>
+                    <p><strong id="deleteVariantSku" class="text-danger"></strong>?</p>
+                    <p class="text-muted small">This action cannot be undone.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-danger">Delete Variant</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Edit Variant Modal
+        const editVariantModal = document.getElementById('editVariantModal');
+        editVariantModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            document.getElementById('editVariantId').value = button.getAttribute('data-id');
+            document.getElementById('editProductId').value = button.getAttribute('data-productid');
+            document.getElementById('editSku').value = button.getAttribute('data-sku');
+            document.getElementById('editColor').value = button.getAttribute('data-color');
+            document.getElementById('editSize').value = button.getAttribute('data-size');
+            document.getElementById('editPrice').value = button.getAttribute('data-price');
+            document.getElementById('editStock').value = button.getAttribute('data-stock');
+            document.getElementById('editIsActive').checked = button.getAttribute('data-isactive') == "True" || button.getAttribute('data-isactive') === "true";
+
+            // Image preview logic
+            const imageUrl = button.getAttribute('data-imageurl');
+            const previewContainer = document.getElementById('editImagePreviewContainer');
+            const removeInput = document.getElementById('editRemoveImage');
+            removeInput.value = "false";
+            previewContainer.innerHTML = "";
+
+            if (imageUrl && imageUrl !== "") {
+                // Show current image and remove button
+                previewContainer.innerHTML = `
+                    <div class="mb-2 d-flex align-items-center gap-2">
+                        <img src="${imageUrl}" alt="Current Image" class="rounded" style="width: 60px; height: 60px; object-fit: cover; border: 1px solid #ddd;" />
+                        <button type="button" class="btn btn-sm btn-outline-danger" id="removeEditImageBtn">Remove</button>
+                    </div>
+                `;
+                // Remove handler
+                setTimeout(() => {
+                    const removeBtn = document.getElementById('removeEditImageBtn');
+                    if (removeBtn) {
+                        removeBtn.onclick = function () {
+                            previewContainer.innerHTML = `
+                                <div class="bg-light rounded d-flex align-items-center justify-content-center mb-2" style="width: 60px; height: 60px;">
+                                    <i class="bx bx-image text-muted"></i>
+                                </div>
+                                <span class="text-muted small">No image</span>
+                            `;
+                            removeInput.value = "true";
+                        };
+                    }
+                }, 10);
+            } else {
+                // Show placeholder
+                previewContainer.innerHTML = `
+                    <div class="bg-light rounded d-flex align-items-center justify-content-center mb-2" style="width: 60px; height: 60px;">
+                        <i class="bx bx-image text-muted"></i>
+                    </div>
+                    <span class="text-muted small">No image</span>
+                `;
+            }
+        });
+
+        // Delete Variant Modal
+        const deleteVariantModal = document.getElementById('deleteVariantModal');
+        deleteVariantModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            document.getElementById('deleteVariantId').value = button.getAttribute('data-id');
+            document.getElementById('deleteProductId').value = button.getAttribute('data-productid');
+            document.getElementById('deleteVariantSku').textContent = button.getAttribute('data-sku');
+        });
+    </script>
 }

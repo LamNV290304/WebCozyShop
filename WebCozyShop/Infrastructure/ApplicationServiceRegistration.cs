@@ -14,6 +14,7 @@ namespace WebCozyShop.Infrastructure
             services.AddScoped<ITokenRepository, TokenRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<IProductVariantRepository, ProductVariantRepository>();
 
             // Register services
             services.AddScoped<IAuthenService, AuthenService>();
@@ -21,6 +22,8 @@ namespace WebCozyShop.Infrastructure
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IProductVariantService, ProductVariantService>();
+            services.AddScoped<ICloudinaryService, CloudinaryService>();
 
             return services;
         }

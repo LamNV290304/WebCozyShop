@@ -70,6 +70,7 @@ namespace WebCozyShop.Repositories
             {
                 return _CozyShopContext.Products
                     .Include(p => p.Category)
+                    .Include(p => p.ProductVariants)
                     .FirstOrDefault(p => p.ProductId == ProductId);
             }
             catch (Exception ex)

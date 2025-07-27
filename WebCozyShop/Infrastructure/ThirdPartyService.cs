@@ -8,8 +8,10 @@ namespace WebCozyShop.Infrastructure
             this IServiceCollection services,
             IConfiguration configuration)
         {
-            // 1. Bind options
             services.Configure<SmtpSettings>(configuration.GetSection("Smtp"));
+
+            services.Configure<CloudinarySettings>(configuration.GetSection("Cloudinary"));
+
             return services;
         }
     }
