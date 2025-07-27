@@ -55,10 +55,12 @@ public partial class CozyShopContext : DbContext
             entity.Property(e => e.TotalAmount).HasColumnType("decimal(10, 2)");
             entity.Property(e => e.UserId).HasColumnName("UserId");
 
-            entity.HasOne(d => d.User).WithMany(p => p.Invoices)
+            entity.HasOne(d => d.User)
+                .WithMany(p => p.Invoices)
                 .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("FK__Invoices__UserId__5165187F");
+
         });
 
         modelBuilder.Entity<InvoiceDetail>(entity =>
@@ -72,12 +74,12 @@ public partial class CozyShopContext : DbContext
 
             entity.HasOne(d => d.Invoice).WithMany(p => p.InvoiceDetails)
                 .HasForeignKey(d => d.InvoiceId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK__InvoiceDe__Invoi__5441852A");
 
             entity.HasOne(d => d.Variant).WithMany(p => p.InvoiceDetails)
                 .HasForeignKey(d => d.VariantId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("FK__InvoiceDe__Varia__5535A963");
         });
 
@@ -126,9 +128,10 @@ public partial class CozyShopContext : DbContext
                 .HasColumnName("SKU");
             entity.Property(e => e.StockQuantity).HasDefaultValue(0);
 
-            entity.HasOne(d => d.Product).WithMany(p => p.ProductVariants)
+            entity.HasOne(d => d.Product)
+                .WithMany(p => p.ProductVariants)
                 .HasForeignKey(d => d.ProductId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK__ProductVa__Produ__45F365D3");
         });
 

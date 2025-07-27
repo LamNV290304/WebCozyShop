@@ -40,7 +40,6 @@
                         <th>Name</th>
                         <th>Description</th>
                         <th>Category</th>
-                        <th>Created At</th>
                         <th class="text-center">Actions</th>
                     </tr>
                 </thead>
@@ -52,7 +51,6 @@
                             <td>@product.Name</td>
                             <td>@product.Description</td>
                             <td>@product.Category.Name</td>
-                            <td>@product.CreatedAt?.ToString("dd-MM-yyyy")</td>
                             <td class="text-center">
                                 <button class="btn btn-sm btn-warning" data-bs-toggle="modal"
                                         data-bs-target="#editModal"

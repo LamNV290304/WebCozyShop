@@ -93,7 +93,7 @@ namespace WebCozyShop.Repositories
                     query = query.Where(p => p.CategoryId == CategoryId);
 
                 return query
-                    .OrderByDescending(p => p.CreatedAt)
+                    .OrderBy(p => p.ProductId)
                     .Skip((pageIndex - 1) * pageSize)
                     .Take(pageSize)
                     .ToList();
