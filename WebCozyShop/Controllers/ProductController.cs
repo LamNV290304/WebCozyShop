@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using WebCozyShop.Filter;
 using WebCozyShop.Models;
 using WebCozyShop.Services.Interface;
 
 namespace WebCozyShop.Controllers
 {
+    [SessionAuthorize]
     public class ProductController : Controller
     {
         private readonly IProductService _productService;

@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using WebCozyShop.Filter;
 using WebCozyShop.Services.Interface;
 using WebCozyShop.ViewModels;
 
 namespace WebCozyShop.Controllers
 {
+    [SessionAuthorize]
     public class CategoryController : Controller
     {
         private readonly ICategoryService _categoryService;

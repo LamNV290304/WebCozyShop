@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using WebCozyShop.Filter;
 using WebCozyShop.Models;
 using WebCozyShop.Requests;
 using WebCozyShop.Services.Interface;
@@ -6,6 +7,7 @@ using WebCozyShop.ViewModels;
 
 namespace WebCozyShop.Controllers
 {
+    [SessionAuthorize]
     public class UserController : Controller
     {
         private readonly IUserService _userService;
@@ -71,6 +73,7 @@ namespace WebCozyShop.Controllers
             return RedirectToAction("ChangePassword");
         }
 
+        [SessionRoleAuthorize("admin")]
         [HttpGet]
         public IActionResult UserList(string searchTerm = "", int page = 1)
         {
@@ -78,6 +81,7 @@ namespace WebCozyShop.Controllers
             return View(vm);
         }
 
+        [SessionRoleAuthorize("admin")]
         [HttpPost]
         public IActionResult DeleteUser(int id)
         {
@@ -93,12 +97,14 @@ namespace WebCozyShop.Controllers
             return RedirectToAction("UserList");
         }
 
+        [SessionRoleAuthorize("admin")]
         [HttpGet]
         public IActionResult CreateUser()
         {
             return View();
         }
 
+        [SessionRoleAuthorize("admin")]
         [HttpPost]
         public IActionResult CreateUser(CreateUserRequest request)
         {

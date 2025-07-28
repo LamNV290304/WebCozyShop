@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using WebCozyShop.Filter;
 using WebCozyShop.Helper;
 using WebCozyShop.Services.Interface;
 using WebCozyShop.ViewModels;
 
 namespace WebCozyShop.Controllers
 {
+    [SessionAuthorize]
     public class InvoiceController : Controller
     {
         private readonly IInvoiceService _invoiceService;

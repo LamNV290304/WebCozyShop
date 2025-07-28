@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using WebCozyShop.Filter;
 using WebCozyShop.Models;
 using WebCozyShop.Requests;
 using WebCozyShop.Services.Interface;
@@ -117,7 +118,7 @@ namespace WebCozyShop.Controllers
             return View();
         }
 
-
+        [SessionAuthorize]
         [HttpGet]
         public IActionResult Logout()
         {

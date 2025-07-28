@@ -4,9 +4,11 @@ using WebCozyShop.ViewModels;
 using WebCozyShop.Models;
 using WebCozyShop.Repositories.Interface;
 using WebCozyShop.Services;
+using WebCozyShop.Filter;
 
 namespace WebCozyShop.Controllers
 {
+    [SessionAuthorize]
     public class ProductVariantController : Controller
     {
         private readonly IProductVariantService _variantService;
