@@ -1,4 +1,4 @@
-using WebCozyShop.Models;
+﻿using WebCozyShop.Models;
 using WebCozyShop.Repositories.Interface;
 using WebCozyShop.Services.Interface;
 using WebCozyShop.Helper;
@@ -84,6 +84,38 @@ namespace WebCozyShop.Services
             }
         }
 
+        public void ImportProducts(List<ImportItemViewModel> items)
+        {
+            foreach (var item in items)
+            {
+                var variant = _variantRepo.GetProductVariantBySku(item.Sku);
+                if (variant != null)
+                {
+                    variant.StockQuantity += item.QuantityToImport;
+                    _variantRepo.UpdateStockQuantity(variant.VariantId, variant.StockQuantity);
+                    item.Error = null;
+                }
+                else
+                {
+                    item.Error = $"SKU '{item.Sku}' not found!";
+                }
+            }
+        }
+
+        public List<ImportItemViewModel> ValidateImport(List<ImportItemViewModel> items)
+        {
+            foreach (var item in items)
+            {
+                var variant = _variantRepo.GetProductVariantBySku(item.Sku);
+                if (variant == null)
+                {
+                    item.Error = $"SKU '{item.Sku}' not found.";
+                }
+            }
+
+            return items;
+        }
+
         public bool UpdateProductVariant(ProductVariant variant)
         {
             try
@@ -97,9 +129,5 @@ namespace WebCozyShop.Services
             }
         }
 
-        public bool UpdateStockQuantity(int variantId, int newQuantity)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

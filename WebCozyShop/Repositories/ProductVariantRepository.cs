@@ -135,7 +135,7 @@ namespace WebCozyShop.Repositories
             }
         }
 
-        public bool UpdateStockQuantity(int variantId, int newQuantity)
+        public bool UpdateStockQuantity(int variantId, int? newQuantity)
         {
             try
             {

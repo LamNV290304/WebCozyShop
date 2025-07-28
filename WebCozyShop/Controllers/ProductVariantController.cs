@@ -120,5 +120,35 @@ namespace WebCozyShop.Controllers
             return RedirectToAction("ProductVariantList", new { productId = productId });
         }
 
+        [HttpGet]
+        public IActionResult ImportProducts()
+        {
+            var model = new ImportProductListViewModel
+            {
+                Items = new List<ImportItemViewModel> {
+                    new ImportItemViewModel()
+                }
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult ImportProducts(ImportProductListViewModel model)
+        {
+            var validatedItems = _variantService.ValidateImport(model.Items);
+
+            if (validatedItems.Any(i => !string.IsNullOrEmpty(i.Error)))
+            {
+                model.Items = validatedItems;
+                TempData["Error"] = "❌ Import failed due to invalid SKU(s).";
+                return View("ImportView", model);
+            }
+
+            _variantService.ImportProducts(validatedItems);
+
+            TempData["Success"] = "📦 Import successful!";
+            return RedirectToAction("ImportView");
+        }
+
     }
 }

@@ -1,0 +1,72 @@
+﻿@model ImportProductListViewModel
+
+@{
+    ViewData["Title"] = "Import Products";
+}
+
+<h4>📦 Import Products by SKU</h4>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+<form asp-action="ImportProducts" method="post">
+    <table class="table" id="importTable">
+        <!-- ✅ Đặt ID -->
+        <thead>
+            <tr>
+                <th>SKU</th>
+                <th>Quantity</th>
+                <th>Error</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Items.Count; i++)
+            {
+                <tr>
+                    <td><input asp-for="Items[@i].Sku" class="form-control" /></td>
+                    <td><input asp-for="Items[@i].QuantityToImport" type="number" min="1" class="form-control" /></td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(Model.Items[i].Error))
+                        {
+                            <span class="text-danger">@Model.Items[i].Error</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <!-- ✅ Nút thêm dòng mới -->
+    <button type="button" class="btn btn-outline-secondary mb-3" onclick="addRow()">➕ Add Row</button>
+
+    <br />
+    <button type="submit" class="btn btn-primary">📥 Import</button>
+</form>
+
+@section Scripts {
+    <script>
+        let rowIndex = @Model.Items.Count;
+
+        function addRow() {
+            const table = document.getElementById('importTable').getElementsByTagName('tbody')[0];
+            const newRow = table.insertRow();
+
+            const cellSku = newRow.insertCell(0);
+            const cellQty = newRow.insertCell(1);
+            const cellError = newRow.insertCell(2);
+
+            cellSku.innerHTML = `<input name="Items[${rowIndex}].Sku" class="form-control" />`;
+            cellQty.innerHTML = `<input name="Items[${rowIndex}].QuantityToImport" type="number" min="1" class="form-control" />`;
+            cellError.innerHTML = `<span class="text-muted">New</span>`;
+
+            rowIndex++;
+        }
+
+        function removeRow(button) {
+            const row = button.closest("tr");
+            row.remove();
+        }
+    </script>
+}

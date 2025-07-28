@@ -15,7 +15,8 @@ namespace WebCozyShop.Services.Interface
 
         // Update
         bool UpdateProductVariant(ProductVariant variant);
-        bool UpdateStockQuantity(int variantId, int newQuantity);
+        void ImportProducts(List<ImportItemViewModel> items);
+        List<ImportItemViewModel> ValidateImport(List<ImportItemViewModel> items);
 
         // Delete
         bool DeleteProductVariant(int variantId, int productId);
