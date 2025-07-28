@@ -10,23 +10,16 @@ namespace WebCozyShop.Repositories.Interface
         // Read
         ProductVariant? GetProductVariantById(int variantId);
         List<ProductVariant> GetProductVariantsByProductId(int productId);
-        List<ProductVariant> GetAllProductVariants();
-        List<ProductVariant> GetActiveProductVariants();
-        List<ProductVariant> GetProductVariantsPaged(int productId, int pageIndex, int pageSize);
-        int CountProductVariants(int productId);
+        List<ProductVariant> GetProductVariantsPaged(int productId, string search, int pageIndex, int pageSize);
+        int CountProductVariants(int productId, string search);
         
         // Update
         void UpdateProductVariant(ProductVariant variant);
         bool UpdateStockQuantity(int variantId, int newQuantity);
-        bool ToggleVariantStatus(int variantId, bool isActive);
         
         // Delete
         void DeleteProductVariant(int variantId);
-        bool SoftDeleteProductVariant(int variantId); // Set IsActive to false
         
-        // Utility methods
-        bool IsVariantExists(int variantId);
-        bool IsSkuExists(string sku);
         ProductVariant? GetProductVariantBySku(string sku);
     }
 }

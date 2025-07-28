@@ -1,15 +1,23 @@
 using WebCozyShop.Models;
+using WebCozyShop.ViewModels;
 
 namespace WebCozyShop.Services.Interface
 {
     public interface IProductVariantService
     {
-        (bool Success, string Error, ProductVariant? Variant) CreateVariant(ProductVariant variant);
-        (bool Success, string Error) UpdateVariant(ProductVariant variant);
-        (bool Success, string Error) DeleteVariant(int variantId, int productId);
-        (bool Success, string Error) SoftDeleteVariant(int variantId, int productId);
-        (bool Success, string Error) UpdateStock(int variantId, int newStock);
-        (bool Success, string Error) ToggleStatus(int variantId, bool isActive);
-        bool IsSkuAvailable(string sku, int? excludeVariantId = null);
+        // Create
+        bool AddProductVariant(ProductVariant variant);
+
+        // Read
+        ProductVariant? GetProductVariantById(int variantId);
+        ProductVariant? GetProductVariantBySku(string sku);
+        ProductVariantManagementViewModel GetProductVariantsPaged(int productId, string search, int pageIndex, int pageSize);
+
+        // Update
+        bool UpdateProductVariant(ProductVariant variant);
+        bool UpdateStockQuantity(int variantId, int newQuantity);
+
+        // Delete
+        bool DeleteProductVariant(int variantId, int productId);
     }
 }

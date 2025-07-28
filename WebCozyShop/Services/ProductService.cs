@@ -22,11 +22,6 @@ namespace WebCozyShop.Services
             _productRepository.AddProduct(product);
         }
 
-        public int Count(string search, int CategoryId)
-        {
-            return _productRepository.Count(search, CategoryId);
-        }
-
         public void DeleteProduct(int ProductId)
         {
             _productRepository.DeleteProduct(ProductId);

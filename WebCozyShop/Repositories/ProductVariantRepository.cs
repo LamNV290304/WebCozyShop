@@ -13,7 +13,6 @@ namespace WebCozyShop.Repositories
             _CozyShopContext = CozyShopContext;
         }
 
-        // Create
         public void AddProductVariant(ProductVariant variant)
         {
             try
@@ -27,7 +26,6 @@ namespace WebCozyShop.Repositories
             }
         }
 
-        // Read
         public ProductVariant? GetProductVariantById(int variantId)
         {
             try
@@ -57,42 +55,24 @@ namespace WebCozyShop.Repositories
             }
         }
 
-        public List<ProductVariant> GetAllProductVariants()
+        public List<ProductVariant> GetProductVariantsPaged(int productId, string search, int pageIndex, int pageSize)
         {
             try
             {
-                return _CozyShopContext.ProductVariants
+                var query = _CozyShopContext.ProductVariants
                     .Include(pv => pv.Product)
-                    .ToList();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Error retrieving all product variants.", ex);
-            }
-        }
+                    .Where(pv => pv.ProductId == productId);
 
-        public List<ProductVariant> GetActiveProductVariants()
-        {
-            try
-            {
-                return _CozyShopContext.ProductVariants
-                    .Where(pv => pv.IsActive == true)
-                    .Include(pv => pv.Product)
-                    .ToList();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Error retrieving active product variants.", ex);
-            }
-        }
+                if (!string.IsNullOrEmpty(search))
+                {
+                    query = query.Where(pv =>
+                        (pv.Sku != null && pv.Sku.Contains(search)) ||
+                        (pv.Color != null && pv.Color.Contains(search)) ||
+                        (pv.Size != null && pv.Size.Contains(search)));
+                }
 
-        public List<ProductVariant> GetProductVariantsPaged(int productId, int pageIndex, int pageSize)
-        {
-            try
-            {
-                return _CozyShopContext.ProductVariants
-                    .Where(pv => pv.ProductId == productId)
-                    .Include(pv => pv.Product)
+                return query
+                    .OrderByDescending(pv => pv.VariantId)
                     .Skip((pageIndex - 1) * pageSize)
                     .Take(pageSize)
                     .ToList();
@@ -103,13 +83,23 @@ namespace WebCozyShop.Repositories
             }
         }
 
-        public int CountProductVariants(int productId)
+
+        public int CountProductVariants(int productId, string search)
         {
             try
             {
-                return _CozyShopContext.ProductVariants
-                    .Where(pv => pv.ProductId == productId)
-                    .Count();
+                var query = _CozyShopContext.ProductVariants
+                    .Where(pv => pv.ProductId == productId);
+
+                if (!string.IsNullOrEmpty(search))
+                {
+                    query = query.Where(pv =>
+                        (pv.Sku != null && pv.Sku.Contains(search)) ||
+                        (pv.Color != null && pv.Color.Contains(search)) ||
+                        (pv.Size != null && pv.Size.Contains(search)));
+                }
+
+                return query.Count();
             }
             catch (Exception ex)
             {
@@ -117,7 +107,7 @@ namespace WebCozyShop.Repositories
             }
         }
 
-        // Update
+
         public void UpdateProductVariant(ProductVariant variant)
         {
             try
@@ -128,14 +118,13 @@ namespace WebCozyShop.Repositories
                 if (tracked == null)
                     throw new Exception("Product variant not found.");
 
-                // Update properties
                 tracked.Sku = variant.Sku;
                 tracked.Color = variant.Color;
                 tracked.Size = variant.Size;
                 tracked.Price = variant.Price;
                 tracked.StockQuantity = variant.StockQuantity;
                 tracked.ImageUrl ??= !string.IsNullOrWhiteSpace(variant.ImageUrl) ? variant.ImageUrl : tracked.ImageUrl;
-                tracked.IsActive ??=  variant.IsActive != null ? false : variant.IsActive;
+                tracked.IsActive = variant.IsActive;
                 tracked.ProductId = variant.ProductId;
 
                 _CozyShopContext.SaveChanges();
@@ -165,26 +154,6 @@ namespace WebCozyShop.Repositories
             }
         }
 
-        public bool ToggleVariantStatus(int variantId, bool isActive)
-        {
-            try
-            {
-                var variant = _CozyShopContext.ProductVariants.Find(variantId);
-                if (variant != null)
-                {
-                    variant.IsActive = isActive;
-                    _CozyShopContext.SaveChanges();
-                    return true;
-                }
-                return false;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("An error occurred while toggling variant status.", ex);
-            }
-        }
-
-        // Delete
         public void DeleteProductVariant(int variantId)
         {
             try
@@ -202,26 +171,6 @@ namespace WebCozyShop.Repositories
             }
         }
 
-        public bool SoftDeleteProductVariant(int variantId)
-        {
-            try
-            {
-                var variant = _CozyShopContext.ProductVariants.Find(variantId);
-                if (variant != null)
-                {
-                    variant.IsActive = false;
-                    _CozyShopContext.SaveChanges();
-                    return true;
-                }
-                return false;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("An error occurred while soft deleting the product variant.", ex);
-            }
-        }
-
-        // Utility methods
         public bool IsVariantExists(int variantId)
         {
             try
@@ -234,17 +183,7 @@ namespace WebCozyShop.Repositories
             }
         }
 
-        public bool IsSkuExists(string sku)
-        {
-            try
-            {
-                return _CozyShopContext.ProductVariants.Any(pv => pv.Sku == sku);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Error checking if SKU exists.", ex);
-            }
-        }
+        
 
         public ProductVariant? GetProductVariantBySku(string sku)
         {

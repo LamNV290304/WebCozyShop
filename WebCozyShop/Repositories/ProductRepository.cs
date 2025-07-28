@@ -85,6 +85,7 @@ namespace WebCozyShop.Repositories
             {
                 var query = _CozyShopContext.Products
                     .Include(p => p.Category)
+                    .Include(p => p.ProductVariants)
                     .AsQueryable();
 
                 if (!string.IsNullOrEmpty(search))

@@ -1,0 +1,145 @@
+﻿@model WebCozyShop.ViewModels.CreateInvoiceViewModel
+@{
+    ViewData["Title"] = "Create Invoice";
+}
+
+<div class="container mt-4">
+    <div class="row">
+
+        <!-- 🔵 Sidebar: Other Open Invoices -->
+        <div class="col-md-3">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h6 class="fw-bold">🧾 Open Invoices</h6>
+                <form asp-action="NewInvoice" method="post" class="mb-0">
+                    <button type="submit" class="btn btn-sm btn-primary">➕ New</button>
+                </form>
+            </div>
+
+            <div class="list-group">
+                @if (Model.OtherOpenInvoices.Any())
+                {
+                    @foreach (var invoice in Model.OtherOpenInvoices)
+                    {
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <a href="@Url.Action("SwitchInvoice", "Invoice", new { tempUserId = invoice.TempUserId })"
+                                   class="text-decoration-none text-dark fw-semibold d-block text-truncate"
+                                   title="@invoice.TempUserId">
+                                    @invoice.TempUserId.ToString().Substring(0, 8)...
+                                </a>
+                                <small class="text-muted">🧺 @invoice.Count | 💰 @invoice.Total.ToString("N0") ₫</small>
+                            </div>
+                            <form asp-action="DeleteInvoice" method="post" class="ms-2">
+                                <input type="hidden" name="tempUserId" value="@invoice.TempUserId" />
+                                <button class="btn btn-sm btn-outline-danger py-0 px-1" type="submit" title="Delete">
+                                    🗑️
+                                </button>
+                            </form>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="text-muted small text-center mt-3">No other invoices</div>
+                }
+            </div>
+        </div>
+
+        <!-- 🧾 Main Content -->
+        <div class="col-md-9">
+            <h4 class="mb-3">🧾 Create Invoice</h4>
+
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger">@TempData["Error"]</div>
+            }
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success">@TempData["Success"]</div>
+            }
+
+            <!-- 🔍 Add by SKU -->
+            <form asp-action="AddBySku" method="post" class="mb-4">
+                <input type="hidden" name="tempUserId" value="@Model.TempUserId" />
+                <div class="input-group">
+                    <input name="sku" class="form-control" placeholder="Enter SKU..." required />
+                    <button class="btn btn-success" type="submit">➕ Add by SKU</button>
+                </div>
+            </form>
+
+            <!-- 🛒 Invoice Items -->
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    @if (Model.CartItems.Any())
+                    {
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Image</th>
+                                    <th>Product</th>
+                                    <th>Color</th>
+                                    <th>Size</th>
+                                    <th>Unit Price</th>
+                                    <th style="width: 160px;">Quantity</th>
+                                    <th>Total</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.CartItems)
+                                {
+                                    <tr>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                            {
+                                                <img src="@item.ImageUrl" style="width:50px; height:50px; object-fit: cover;" />
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">No Image</span>
+                                            }
+                                        </td>
+                                        <td>@item.Name</td>
+                                        <td>@item.Color</td>
+                                        <td>@item.Size</td>
+                                        <td>@item.UnitPrice.ToString("N0") ₫</td>
+                                        <td>
+                                            <form asp-action="UpdateQuantity" method="post" class="d-flex align-items-center gap-2">
+                                                <input type="hidden" name="tempUserId" value="@Model.TempUserId" />
+                                                <input type="hidden" name="variantId" value="@item.VariantId" />
+                                                <input name="quantity" type="number" min="1" value="@item.Quantity" class="form-control form-control-sm" style="width: 70px;" />
+                                                <button class="btn btn-sm btn-outline-secondary" type="submit">🔁</button>
+                                            </form>
+                                        </td>
+                                        <td>@item.Total.ToString("N0") ₫</td>
+                                        <td>
+                                            <form asp-action="RemoveItem" method="post">
+                                                <input type="hidden" name="tempUserId" value="@Model.TempUserId" />
+                                                <input type="hidden" name="variantId" value="@item.VariantId" />
+                                                <button class="btn btn-sm btn-outline-danger" type="submit">🗑️</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+
+                        <div class="text-end mt-3">
+                            <strong>Total: @Model.TotalAmount.ToString("N0") ₫</strong>
+                        </div>
+
+                        <!-- 💳 Checkout -->
+                        <form asp-action="Checkout" method="post">
+                            <input type="hidden" name="tempUserId" value="@Model.TempUserId" />
+                            <button type="submit" class="btn btn-primary mt-3">💳 Checkout</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning">🛒 No items in the invoice yet.</div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -2,6 +2,7 @@ using WebCozyShop.Models;
 using WebCozyShop.Repositories.Interface;
 using WebCozyShop.Services.Interface;
 using WebCozyShop.Helper;
+using WebCozyShop.ViewModels;
 
 namespace WebCozyShop.Services
 {
@@ -16,96 +17,89 @@ namespace WebCozyShop.Services
             _productRepo = productRepo;
         }
 
-        public (bool Success, string Error, ProductVariant? Variant) CreateVariant(ProductVariant variant)
+        public bool AddProductVariant(ProductVariant variant)
         {
-            if (variant.ProductId <= 0)
-                return (false, "Invalid product ID.", null);
 
-            if (variant.Price <= 0)
-                return (false, "Price must be greater than 0.", null);
+            var product = _productRepo.GetProductById(variant.ProductId);
+            string sku = GenerateHelper.GenerateSKU(product.Name, variant.Color, variant.Size);
 
-            // Auto-generate SKU if empty
-            if (string.IsNullOrEmpty(variant.Sku))
+            if (_variantRepo.GetProductVariantBySku(sku) != null)
             {
-                var product = _productRepo.GetProductById(variant.ProductId);
-                variant.Sku = GenerateHelper.GenerateSKU(
-                    product?.Name ?? "PROD",
-                    variant.Color ?? "DEF",
-                    variant.Size ?? "OS"
-                );
+                throw new ArgumentException("SKU must be unique.");
             }
 
-            // Check SKU uniqueness
-            if (_variantRepo.IsSkuExists(variant.Sku))
-                return (false, "SKU already exists. Please use a different SKU.", null);
-
+            variant.Sku = sku;
             variant.IsActive = true;
-            variant.StockQuantity ??= 0;
-
             _variantRepo.AddProductVariant(variant);
-            return (true, "", variant);
+            return true;
+
         }
 
-        public (bool Success, string Error) UpdateVariant(ProductVariant variant)
-        {
-            if (variant.ProductId <= 0 || variant.VariantId <= 0)
-                return (false, "Invalid variant or product ID.");
-
-            if (string.IsNullOrEmpty(variant.Sku))
-                return (false, "SKU is required.");
-
-            if (variant.Price <= 0)
-                return (false, "Price must be greater than 0.");
-
-            var existingVariant = _variantRepo.GetProductVariantBySku(variant.Sku);
-            if (existingVariant != null && existingVariant.VariantId != variant.VariantId)
-                return (false, "SKU already exists for another variant.");
-
-            variant.StockQuantity ??= 0;
-            _variantRepo.UpdateProductVariant(variant);
-            return (true, "");
-        }
-
-        public (bool Success, string Error) DeleteVariant(int variantId, int productId)
+        public bool DeleteProductVariant(int variantId, int productId)
         {
             var variant = _variantRepo.GetProductVariantById(variantId);
-            if (variant == null)
-                return (false, "Variant not found.");
-            if (variant.ProductId != productId)
-                return (false, "Variant does not belong to the specified product.");
+            if (variant == null) return false;
+            if (variant.ProductId != productId) return false;
 
             _variantRepo.DeleteProductVariant(variantId);
-            return (true, "");
+            return true;
         }
 
-        public (bool Success, string Error) SoftDeleteVariant(int variantId, int productId)
+        public ProductVariant? GetProductVariantById(int variantId)
         {
-            var variant = _variantRepo.GetProductVariantById(variantId);
-            if (variant == null)
-                return (false, "Variant not found.");
-            if (variant.ProductId != productId)
-                return (false, "Variant does not belong to the specified product.");
-
-            var success = _variantRepo.SoftDeleteProductVariant(variantId);
-            return success ? (true, "") : (false, "Variant not found.");
+            return _variantRepo.GetProductVariantById(variantId);
         }
 
-        public (bool Success, string Error) UpdateStock(int variantId, int newStock)
+        public ProductVariant? GetProductVariantBySku(string sku)
         {
-            var success = _variantRepo.UpdateStockQuantity(variantId, newStock);
-            return success ? (true, "") : (false, "Variant not found.");
+            return _variantRepo.GetProductVariantBySku(sku);
         }
 
-        public (bool Success, string Error) ToggleStatus(int variantId, bool isActive)
+        public ProductVariantManagementViewModel GetProductVariantsPaged(int productId, string search, int pageIndex, int pageSize)
         {
-            var success = _variantRepo.ToggleVariantStatus(variantId, isActive);
-            return success ? (true, "") : (false, "Variant not found.");
+            try
+            {
+                Product product = _productRepo.GetProductById(productId);
+
+                List<ProductVariant> productVariants = _variantRepo.GetProductVariantsPaged(productId, search, pageIndex, pageSize);
+                int totalVariants = _variantRepo.CountProductVariants(productId, search);
+                int totalPages = (int)Math.Ceiling((double)totalVariants / pageSize);
+
+                var viewModel = new ProductVariantManagementViewModel
+                {
+                    Product = product,
+                    PagedVariants = productVariants,
+                    Search = search,
+                    CurrentPage = pageIndex,
+                    PageSize = pageSize,
+                    TotalVariants = totalVariants,
+                    TotalPages = totalPages
+                };
+
+                return viewModel;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
-        public bool IsSkuAvailable(string sku, int? excludeVariantId = null)
+        public bool UpdateProductVariant(ProductVariant variant)
         {
-            var existing = _variantRepo.GetProductVariantBySku(sku);
-            return existing == null || (excludeVariantId.HasValue && existing.VariantId == excludeVariantId.Value);
+            try
+            {
+                _variantRepo.UpdateProductVariant(variant);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public bool UpdateStockQuantity(int variantId, int newQuantity)
+        {
+            throw new NotImplementedException();
         }
     }
 }
