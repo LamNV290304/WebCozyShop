@@ -14,7 +14,7 @@ namespace WebCozyShop.Filter
 
         public void OnAuthorization(AuthorizationFilterContext context)
         {
-            var role = context.HttpContext.Session.GetString("UserRole");
+            var role = context.HttpContext.Session.GetString("Role");
 
             if (string.IsNullOrEmpty(role))
             {

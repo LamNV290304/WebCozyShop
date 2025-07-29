@@ -11,7 +11,6 @@ namespace WebCozyShop.Controllers
     public class UserController : Controller
     {
         private readonly IUserService _userService;
-        private const int PageSize = 10;
 
         public UserController(IUserService userService)
         {
